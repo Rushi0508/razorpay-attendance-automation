@@ -25,7 +25,7 @@ async function humanLikeMouseMove(page, selector) {
 async function fillAttendance(email, password) {
     const browser = await puppeteer.launch(
         {
-            headless: true,
+            headless: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         }
     );
