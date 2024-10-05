@@ -1,35 +1,34 @@
 const puppeteer = require('puppeteer');
+require('dotenv').config();
 
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to simulate human-like typing
 async function humanLikeType(page, selector, text) {
     for (let i = 0; i < text.length; i++) {
-        // Generate a random delay between 200ms and 300ms
         const randomDelay = Math.floor(Math.random() * 100) + 200;
-
-        // Type each letter with the random delay
         await page.type(selector, text[i], { delay: randomDelay });
     }
 }
 
-// Function to simulate human-like mouse movement
 async function humanLikeMouseMove(page, selector) {
     const element = await page.$(selector);
     const box = await element.boundingBox();
 
-    // Calculate random offsets for human-like movement
     const randomX = Math.floor(Math.random() * 10);
     const randomY = Math.floor(Math.random() * 10);
 
-    // Move the mouse to the element position
     await page.mouse.move(box.x + randomX, box.y + randomY, { steps: 10 });
 }
 
 async function fillAttendance(email, password) {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch(
+        {
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        }
+    );
     const page = await browser.newPage();
 
     try {
@@ -37,7 +36,7 @@ async function fillAttendance(email, password) {
 
         // Wait for input field with id="email"
         await page.waitForSelector('input[id="email"]');
-
+        console.log("Page loaded successfully");
         // Move the mouse to the email input field in a human-like way
         await humanLikeMouseMove(page, 'input[id="email"]');
 
@@ -50,18 +49,20 @@ async function fillAttendance(email, password) {
 
         // Human-like typing for password
         await humanLikeType(page, 'input[id="password"]', password);
-
+        console.log("Typing done");
         // Optionally sleep for a second (if needed)
         await sleep(1000);
 
         // Optionally move the mouse to the login button and click
         await humanLikeMouseMove(page, 'button[id="loginButton"]');
         await page.click('button[id="loginButton"]');
-
+        console.log("Clicked login button");
         // Wait for other page /attendance to load
         await page.waitForNavigation();
-        await humanLikeMouseMove(page, 'button[value="mark-attendance-checkout"]');
-        await page.click('button[value="mark-attendance-checkout"]');
+        console.log("Logged in successfully");
+        await humanLikeMouseMove(page, 'button[value="mark-attendance-checkin"]');
+        await page.click('button[value="mark-attendance-checkin"]');
+        console.log("Clicked mark attendance");
         await sleep(2000);
     } finally {
         await browser.close();
@@ -71,6 +72,6 @@ async function fillAttendance(email, password) {
 // Define email and password
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
-
+console.log(email, password);
 // Call the function to fill the attendance form
 fillAttendance(email, password);
