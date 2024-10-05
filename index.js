@@ -34,33 +34,25 @@ async function fillAttendance(email, password) {
     try {
         await page.goto(`https://payroll.razorpay.com/login?redirect=%2Fattendance`);
 
-        // Wait for input field with id="email"
         await page.waitForSelector('input[id="email"]');
         console.log("Page loaded successfully");
-        // Move the mouse to the email input field in a human-like way
         await humanLikeMouseMove(page, 'input[id="email"]');
 
-        // Human-like typing for email
         await humanLikeType(page, 'input[id="email"]', email);
 
-        // Wait for password input field and move mouse to it
         await page.waitForSelector('input[id="password"]');
         await humanLikeMouseMove(page, 'input[id="password"]');
 
-        // Human-like typing for password
         await humanLikeType(page, 'input[id="password"]', password);
         console.log("Typing done");
-        // Optionally sleep for a second (if needed)
         await sleep(1000);
 
-        // Optionally move the mouse to the login button and click
         await humanLikeMouseMove(page, 'button[id="loginButton"]');
         await page.click('button[id="loginButton"]');
         console.log("Clicked login button");
-        // Wait for other page /attendance to load
         await page.waitForNavigation();
         console.log("Logged in successfully");
-        await humanLikeMouseMove(page, 'button[value="mark-attendance-checkin"]');
+
         await page.click('button[value="mark-attendance-checkin"]');
         console.log("Clicked mark attendance");
         await sleep(2000);
@@ -69,9 +61,7 @@ async function fillAttendance(email, password) {
     }
 }
 
-// Define email and password
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
-console.log(email, password);
-// Call the function to fill the attendance form
+
 fillAttendance(email, password);
