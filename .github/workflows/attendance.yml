@@ -1,0 +1,31 @@
+name: Fill Attendance
+
+on:
+  schedule:
+    - cron: '30 18 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  fill-attendance:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    # Install Puppeteer and dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # Run the Puppeteer script with secrets as environment variables
+    - name: Run fillAttendance script
+      run: |
+        EMAIL=${{ secrets.EMAIL }} PASSWORD=${{ secrets.PASSWORD }} node index.js
