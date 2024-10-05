@@ -52,7 +52,9 @@ async function fillAttendance(email, password) {
         console.log("Clicked login button");
         await page.waitForNavigation();
         console.log("Logged in successfully");
+        await page.waitForSelector('button[value="mark-attendance-checkin"]');
 
+        await humanLikeMouseMove(page, 'button[value="mark-attendance-checkin"]');
         await page.click('button[value="mark-attendance-checkin"]');
         console.log("Clicked mark attendance");
         await sleep(2000);
